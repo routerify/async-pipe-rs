@@ -1,5 +1,9 @@
-# pipe-rs
+# async-pipe-rs
 
 ```Rust
-pipe<W: AsyncWrite, R: AsyncRead>() -> (W, R)
+use async_pipe::pipe;
+
+fn main() {
+    let (w, r) = pipe();
+}
 ```
