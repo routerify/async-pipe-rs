@@ -1,7 +1,19 @@
 [package]
 name = "async-pipe"
 version = "0.1.0"
+description = "Creates an asynchronous piped reader and writer pair using tokio.rs"
+homepage = "https://github.com/rousan/async-pipe-rs"
+repository = "https://github.com/rousan/async-pipe-rs"
+keywords = ["pipe", "future", "async", "reader", "writer"]
+categories = ["asynchronous"]
 authors = ["Rousan Ali <rousanali786@gmail.com>"]
+readme = "README.md"
+license = "MIT"
 edition = "2018"
 
 [dependencies]
+tokio = { version = "0.2", features= [] }
+log = "0.4"
+
+[dev-dependencies]
+tokio = { version = "0.2", features = ["full"] }
