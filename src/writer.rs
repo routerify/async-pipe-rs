@@ -5,11 +5,13 @@ use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
 use tokio::io::{self, AsyncWrite};
 
+/// The write half of the pipe which implements [`AsyncWrite`](https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncWrite.html).
 pub struct PipeWriter {
     pub(crate) state: Arc<Mutex<State>>,
 }
 
 impl PipeWriter {
+    /// Closes the pipe, any further read will return EOF and any further write will raise an error.
     pub fn close(&self) -> io::Result<()> {
         match self.state.lock() {
             Ok(mut state) => {

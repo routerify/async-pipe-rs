@@ -5,11 +5,13 @@ use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
 use tokio::io::{self, AsyncRead};
 
+/// The read half of the pipe which implements [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
 pub struct PipeReader {
     pub(crate) state: Arc<Mutex<State>>,
 }
 
 impl PipeReader {
+    /// Closes the pipe, any further read will return EOF and any further write will raise an error.
     pub fn close(&self) -> io::Result<()> {
         match self.state.lock() {
             Ok(mut state) => {

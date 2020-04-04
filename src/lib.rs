@@ -1,3 +1,27 @@
+//! Creates an asynchronous piped reader and writer pair using `tokio.rs`.
+//!
+//! # Examples
+//!
+//! ```
+//! # async fn run() {
+//! use async_pipe;
+//! use tokio::prelude::*;
+//!
+//! let (mut w, mut r) = async_pipe::pipe();
+//!  
+//! tokio::spawn(async move {
+//!     w.write_all(b"hello world").await.unwrap();
+//! });
+//!  
+//! let mut v = Vec::new();
+//! r.read_to_end(&mut v).await.unwrap();
+//!
+//! println!("Received: {:?}", String::from_utf8(v));
+//! # }
+//!
+//! tokio::runtime::Runtime::new().unwrap().block_on(run());
+//! ```
+
 use state::State;
 use std::sync::{Arc, Mutex};
 
@@ -8,6 +32,7 @@ mod reader;
 mod state;
 mod writer;
 
+/// Creates a piped pair of an [`AsyncWrite`](https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncWrite.html) and an [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
 pub fn pipe() -> (PipeWriter, PipeReader) {
     let shared_state = Arc::new(Mutex::new(State {
         reader_waker: None,
