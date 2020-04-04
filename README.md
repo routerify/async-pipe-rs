@@ -1,12 +1,12 @@
 # async-pipe-rs
 
-[![crates.io](https://img.shields.io/crates/v/async-rs.svg)](https://crates.io/crates/async-rs)
-[![Documentation](https://docs.rs/async-rs/badge.svg)](https://docs.rs/async-rs)
-[![MIT](https://img.shields.io/crates/l/async-rs.svg)](./LICENSE)
+[![crates.io](https://img.shields.io/crates/v/async-pipe.svg)](https://crates.io/crates/async-pipe)
+[![Documentation](https://docs.rs/async-pipe/badge.svg)](https://docs.rs/async-pipe)
+[![MIT](https://img.shields.io/crates/l/async-pipe.svg)](./LICENSE)
 
 Creates an asynchronous piped reader and writer pair using `tokio.rs`.
 
-[Docs](https://docs.rs/async-rs)
+[Docs](https://docs.rs/async-pipe)
 
 ## Example
 
