@@ -1,6 +1,6 @@
 [package]
 name = "async-pipe"
-version = "0.1.1"
+version = "0.1.2"
 description = "Creates an asynchronous piped reader and writer pair using tokio.rs"
 homepage = "https://github.com/rousan/async-pipe-rs"
 repository = "https://github.com/rousan/async-pipe-rs"

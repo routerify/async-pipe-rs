@@ -8,8 +8,16 @@ Creates an asynchronous piped reader and writer pair using `tokio.rs`.
 
 [Docs](https://docs.rs/async-pipe)
 
-## Example
+## Usage
 
+First add this to your Cargo.toml:
+
+```toml
+[dependencies]
+async-pipe = "0.1"
+```
+
+An example:
 ```rust
 use async_pipe;
 use tokio::prelude::*;
