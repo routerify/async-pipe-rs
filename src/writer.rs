@@ -30,6 +30,25 @@ impl PipeWriter {
         }
     }
 
+    /// It returns true if the next data chunk is written and consumed by the reader; Otherwise it returns false.
+    pub fn is_flushed(&self) -> io::Result<bool> {
+        let state = match self.state.lock() {
+            Ok(s) => s,
+            Err(err) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "{}: PipeWriter: Failed to lock the channel state: {}",
+                        env!("CARGO_PKG_NAME"),
+                        err
+                    ),
+                ));
+            }
+        };
+
+        Ok(state.done_cycle)
+    }
+
     fn wake_reader_half(&self, state: &State) {
         if let Some(ref waker) = state.reader_waker {
             waker.clone().wake();
