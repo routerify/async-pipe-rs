@@ -4,7 +4,8 @@
 [![Documentation](https://docs.rs/async-pipe/badge.svg)](https://docs.rs/async-pipe)
 [![MIT](https://img.shields.io/crates/l/async-pipe.svg)](./LICENSE)
 
-Creates an asynchronous piped reader and writer pair using `tokio.rs`.
+Creates an asynchronous piped reader and writer pair using `tokio.rs` or
+`futures`
 
 [Docs](https://docs.rs/async-pipe)
 

@@ -1,11 +1,18 @@
 use crate::state::Data;
 use crate::state::State;
+use std::io;
 use std::pin::Pin;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
-use tokio::io::{self, AsyncWrite};
 
-/// The write half of the pipe which implements [`AsyncWrite`](https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncWrite.html).
+/// The write half of the pipe
+///
+/// Implements [`tokio::io::AsyncWrite`][tokio-async-write] when feature `tokio` is enabled (the
+/// default). Implements [`futures::io::AsyncWrite`][futures-async-write] when feature `futures` is
+/// enabled.
+///
+/// [futures-async-write]: https://docs.rs/futures/0.3.5/futures/io/trait.AsyncWrite.html
+/// [tokio-async-write]: https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncWrite.html
 pub struct PipeWriter {
     pub(crate) state: Arc<Mutex<State>>,
 }
@@ -54,21 +61,7 @@ impl PipeWriter {
             waker.clone().wake();
         }
     }
-}
 
-impl Drop for PipeWriter {
-    fn drop(&mut self) {
-        if let Err(err) = self.close() {
-            log::warn!(
-                "{}: PipeWriter: Failed to close the channel on drop: {}",
-                env!("CARGO_PKG_NAME"),
-                err
-            );
-        }
-    }
-}
-
-impl AsyncWrite for PipeWriter {
     fn poll_write(self: Pin<&mut Self>, cx: &mut Context, buf: &[u8]) -> Poll<io::Result<usize>> {
         let mut state;
         match self.state.lock() {
@@ -140,5 +133,47 @@ impl AsyncWrite for PipeWriter {
                 ),
             ))),
         }
+    }
+}
+
+impl Drop for PipeWriter {
+    fn drop(&mut self) {
+        if let Err(err) = self.close() {
+            log::warn!(
+                "{}: PipeWriter: Failed to close the channel on drop: {}",
+                env!("CARGO_PKG_NAME"),
+                err
+            );
+        }
+    }
+}
+
+#[cfg(feature = "tokio")]
+impl tokio::io::AsyncWrite for PipeWriter {
+    fn poll_write(self: Pin<&mut Self>, cx: &mut Context, buf: &[u8]) -> Poll<io::Result<usize>> {
+        self.poll_write(cx, buf)
+    }
+
+    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context) -> Poll<io::Result<()>> {
+        self.poll_flush(cx)
+    }
+
+    fn poll_shutdown(self: Pin<&mut Self>, cx: &mut Context) -> Poll<io::Result<()>> {
+        self.poll_shutdown(cx)
+    }
+}
+
+#[cfg(feature = "futures")]
+impl futures::io::AsyncWrite for PipeWriter {
+    fn poll_write(self: Pin<&mut Self>, cx: &mut Context, buf: &[u8]) -> Poll<io::Result<usize>> {
+        self.poll_write(cx, buf)
+    }
+
+    fn poll_flush(self: Pin<&mut Self>, cx: &mut Context) -> Poll<io::Result<()>> {
+        self.poll_flush(cx)
+    }
+
+    fn poll_close(self: Pin<&mut Self>, cx: &mut Context) -> Poll<io::Result<()>> {
+        self.poll_shutdown(cx)
     }
 }

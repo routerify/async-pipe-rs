@@ -1,4 +1,4 @@
-//! Creates an asynchronous piped reader and writer pair using `tokio.rs`.
+//! Creates an asynchronous piped reader and writer pair using `tokio.rs` and `futures`.
 //!
 //! # Examples
 //!
@@ -21,6 +21,11 @@
 //!
 //! tokio::runtime::Runtime::new().unwrap().block_on(run());
 //! ```
+//!
+//! # Featues
+//!
+//! * `tokio` (default) Implement `AsyncWrite` and `AsyncRead` from `tokio::io`.
+//! * `futures` Implement `AsyncWrite` and `AsyncRead` from `futures::io`
 
 use state::State;
 use std::sync::{Arc, Mutex};

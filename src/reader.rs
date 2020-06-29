@@ -1,11 +1,18 @@
 use crate::state::{Data, State};
+use std::io;
 use std::pin::Pin;
 use std::ptr;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
-use tokio::io::{self, AsyncRead};
 
-/// The read half of the pipe which implements [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
+/// The read half of the pipe
+///
+/// Implements [`tokio::io::AsyncRead`][tokio-async-read] when feature `tokio` is enabled (the
+/// default). Implements [`futures::io::AsyncRead`][futures-async-read] when feature `futures` is
+/// enabled.
+///
+/// [futures-async-read]: https://docs.rs/futures/0.3.5/futures/io/trait.AsyncRead.html
+/// [tokio-async-read]: https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncRead.html
 pub struct PipeReader {
     pub(crate) state: Arc<Mutex<State>>,
 }
@@ -62,21 +69,7 @@ impl PipeReader {
         }
         len
     }
-}
 
-impl Drop for PipeReader {
-    fn drop(&mut self) {
-        if let Err(err) = self.close() {
-            log::warn!(
-                "{}: PipeReader: Failed to close the channel on drop: {}",
-                env!("CARGO_PKG_NAME"),
-                err
-            );
-        }
-    }
-}
-
-impl AsyncRead for PipeReader {
     fn poll_read(
         self: Pin<&mut Self>,
         cx: &mut Context,
@@ -121,5 +114,39 @@ impl AsyncRead for PipeReader {
                 Poll::Pending
             }
         };
+    }
+}
+
+impl Drop for PipeReader {
+    fn drop(&mut self) {
+        if let Err(err) = self.close() {
+            log::warn!(
+                "{}: PipeReader: Failed to close the channel on drop: {}",
+                env!("CARGO_PKG_NAME"),
+                err
+            );
+        }
+    }
+}
+
+#[cfg(feature = "tokio")]
+impl tokio::io::AsyncRead for PipeReader {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context,
+        buf: &mut [u8],
+    ) -> Poll<io::Result<usize>> {
+        self.poll_read(cx, buf)
+    }
+}
+
+#[cfg(feature = "futures")]
+impl futures::io::AsyncRead for PipeReader {
+    fn poll_read(
+        self: Pin<&mut Self>,
+        cx: &mut Context,
+        buf: &mut [u8],
+    ) -> Poll<io::Result<usize>> {
+        self.poll_read(cx, buf)
     }
 }
