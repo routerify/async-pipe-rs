@@ -61,7 +61,7 @@ mod tests {
     use tokio::io::{AsyncWriteExt, AsyncReadExt};
 
     #[tokio::test]
-    async fn should_receive_input_text() {
+    async fn should_read_expected_text() {
         const EXPECTED: &'static str = "hello world";
 
         let (mut w, mut r) = pipe();
@@ -72,6 +72,7 @@ mod tests {
 
         let mut v = Vec::new();
         r.read_to_end(&mut v).await.unwrap();
-        assert_eq!(EXPECTED, String::from_utf8(v).unwrap().as_str());
+        let actual = String::from_utf8(v).unwrap();
+        assert_eq!(EXPECTED, actual.as_str());
     }
 }
