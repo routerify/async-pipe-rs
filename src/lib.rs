@@ -45,11 +45,11 @@ pub fn pipe() -> (PipeWriter, PipeReader) {
     }));
 
     let w = PipeWriter {
-        state: Arc::clone(&shared_state),
+        state: shared_state.clone()
     };
 
     let r = PipeReader {
-        state: Arc::clone(&shared_state),
+        state: shared_state.clone(),
     };
 
     (w, r)
