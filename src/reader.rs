@@ -58,7 +58,7 @@ impl PipeReader {
     fn copy_data_into_buffer(&self, data: &Data, buf: &mut ReadBuf) -> usize {
         let len = data.len.min(buf.capacity());
         unsafe {
-            ptr::copy_nonoverlapping(data.ptr, buf.filled_mut().as_mut_ptr(), len);
+            ptr::copy_nonoverlapping(data.ptr, buf.initialize_unfilled().as_mut_ptr(), len);
         }
         len
     }
