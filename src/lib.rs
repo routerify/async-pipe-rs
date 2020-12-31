@@ -54,3 +54,24 @@ pub fn pipe() -> (PipeWriter, PipeReader) {
 
     (w, r)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio::io::{AsyncWriteExt, AsyncReadExt};
+
+    #[tokio::test]
+    async fn should_receive_input_text() {
+        const EXPECTED: &'static str = "hello world";
+
+        let (mut w, mut r) = pipe();
+
+        tokio::spawn(async move {
+            w.write_all(EXPECTED.as_bytes()).await.unwrap();
+        });
+
+        let mut v = Vec::new();
+        r.read_to_end(&mut v).await.unwrap();
+        assert_eq!(EXPECTED, String::from_utf8(v).unwrap().as_str());
+    }
+}
