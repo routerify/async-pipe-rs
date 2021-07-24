@@ -59,6 +59,7 @@ impl PipeReader {
         let len = data.len.min(buf.capacity());
         unsafe {
             ptr::copy_nonoverlapping(data.ptr, buf.initialize_unfilled().as_mut_ptr(), len);
+            buf.advance(len);
         }
         len
     }
