@@ -5,7 +5,7 @@
 //! ```
 //! # async fn run() {
 //! use async_pipe;
-//! use tokio::prelude::*;
+//! use tokio::io::{AsyncWriteExt, AsyncReadExt};
 //!
 //! let (mut w, mut r) = async_pipe::pipe();
 //!  
@@ -45,12 +45,34 @@ pub fn pipe() -> (PipeWriter, PipeReader) {
     }));
 
     let w = PipeWriter {
-        state: Arc::clone(&shared_state),
+        state: shared_state.clone()
     };
 
     let r = PipeReader {
-        state: Arc::clone(&shared_state),
+        state: shared_state.clone(),
     };
 
     (w, r)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio::io::{AsyncWriteExt, AsyncReadExt};
+
+    #[tokio::test]
+    async fn should_read_expected_text() {
+        const EXPECTED: &'static str = "hello world";
+
+        let (mut w, mut r) = pipe();
+
+        tokio::spawn(async move {
+            w.write_all(EXPECTED.as_bytes()).await.unwrap();
+        });
+
+        let mut v = Vec::new();
+        r.read_to_end(&mut v).await.unwrap();
+        let actual = String::from_utf8(v).unwrap();
+        assert_eq!(EXPECTED, actual.as_str());
+    }
 }

@@ -1,5 +1,5 @@
 use async_pipe;
-use tokio::prelude::*;
+use tokio::io::{AsyncWriteExt, AsyncReadExt};
 
 #[tokio::main]
 async fn main() {

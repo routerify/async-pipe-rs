@@ -3,7 +3,7 @@ use std::pin::Pin;
 use std::ptr;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
-use tokio::io::{self, AsyncRead};
+use tokio::io::{self, AsyncRead, ReadBuf};
 
 /// The read half of the pipe which implements [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
 pub struct PipeReader {
@@ -55,10 +55,10 @@ impl PipeReader {
         }
     }
 
-    fn copy_data_into_buffer(&self, data: &Data, buf: &mut [u8]) -> usize {
-        let len = data.len.min(buf.len());
+    fn copy_data_into_buffer(&self, data: &Data, buf: &mut ReadBuf) -> usize {
+        let len = data.len.min(buf.capacity());
         unsafe {
-            ptr::copy_nonoverlapping(data.ptr, buf.as_mut_ptr(), len);
+            ptr::copy_nonoverlapping(data.ptr, buf.initialize_unfilled().as_mut_ptr(), len);
         }
         len
     }
@@ -80,8 +80,8 @@ impl AsyncRead for PipeReader {
     fn poll_read(
         self: Pin<&mut Self>,
         cx: &mut Context,
-        buf: &mut [u8],
-    ) -> Poll<io::Result<usize>> {
+        buf: &mut ReadBuf,
+    ) -> Poll<io::Result<()>> {
         let mut state;
         match self.state.lock() {
             Ok(s) => state = s,
@@ -98,7 +98,7 @@ impl AsyncRead for PipeReader {
         }
 
         if state.closed {
-            return Poll::Ready(Ok(0));
+            return Poll::Ready(Ok(()));
         }
 
         return if state.done_cycle {
@@ -115,7 +115,7 @@ impl AsyncRead for PipeReader {
 
                 self.wake_writer_half(&*state);
 
-                Poll::Ready(Ok(copied_bytes_len))
+                Poll::Ready(Ok(()))
             } else {
                 state.reader_waker = Some(cx.waker().clone());
                 Poll::Pending

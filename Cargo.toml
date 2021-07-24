@@ -12,8 +12,8 @@ license = "MIT"
 edition = "2018"
 
 [dependencies]
-tokio = { version = "0.2", features= [] }
+tokio = { version = "1", features= [] }
 log = "0.4"
 
 [dev-dependencies]
-tokio = { version = "0.2", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
