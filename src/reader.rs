@@ -6,6 +6,7 @@ use std::task::{Context, Poll};
 use tokio::io::{self, AsyncRead, ReadBuf};
 
 /// The read half of the pipe which implements [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
+#[derive(Clone)]
 pub struct PipeReader {
     pub(crate) state: Arc<Mutex<State>>,
 }

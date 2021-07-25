@@ -6,6 +6,7 @@ use std::task::{Context, Poll};
 use tokio::io::{self, AsyncWrite};
 
 /// The write half of the pipe which implements [`AsyncWrite`](https://docs.rs/tokio/0.2.16/tokio/io/trait.AsyncWrite.html).
+#[derive(Clone)]
 pub struct PipeWriter {
     pub(crate) state: Arc<Mutex<State>>,
 }
