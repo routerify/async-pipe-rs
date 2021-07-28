@@ -6,6 +6,7 @@ use std::task::{Context, Poll};
 use tokio::io::{self, AsyncRead, ReadBuf};
 
 /// The read half of the pipe which implements [`AsyncRead`](https://docs.rs/tokio/0.2.15/tokio/io/trait.AsyncRead.html).
+#[derive(Clone)]
 pub struct PipeReader {
     pub(crate) state: Arc<Mutex<State>>,
 }
@@ -59,6 +60,7 @@ impl PipeReader {
         let len = data.len.min(buf.capacity());
         unsafe {
             ptr::copy_nonoverlapping(data.ptr, buf.initialize_unfilled().as_mut_ptr(), len);
+            buf.advance(len);
         }
         len
     }
