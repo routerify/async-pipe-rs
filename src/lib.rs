@@ -45,7 +45,7 @@ pub fn pipe() -> (PipeWriter, PipeReader) {
     }));
 
     let w = PipeWriter {
-        state: shared_state.clone()
+        state: shared_state.clone(),
     };
 
     let r = PipeReader {
@@ -58,7 +58,7 @@ pub fn pipe() -> (PipeWriter, PipeReader) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use tokio::io::{AsyncWriteExt, AsyncReadExt};
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
 
     #[tokio::test]
     async fn should_read_expected_text() {
