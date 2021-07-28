@@ -5,9 +5,7 @@ use tokio::io::{AsyncReadExt, AsyncWriteExt};
 async fn main() {
     let (mut w, mut r) = async_pipe::pipe();
 
-    tokio::spawn(async move {
-        w.write_all(b"hello world").await.unwrap();
-    });
+    let _ = w.write_all(b"hello world").await;
 
     let mut v = Vec::new();
     r.read_to_end(&mut v).await.unwrap();
