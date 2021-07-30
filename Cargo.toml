@@ -2,8 +2,8 @@
 name = "async-pipe"
 version = "0.1.3"
 description = "Creates an asynchronous piped reader and writer pair using tokio.rs"
-homepage = "https://github.com/rousan/async-pipe-rs"
-repository = "https://github.com/rousan/async-pipe-rs"
+homepage = "https://github.com/routerify/async-pipe-rs"
+repository = "https://github.com/routerify/async-pipe-rs"
 keywords = ["pipe", "future", "async", "reader", "writer"]
 categories = ["asynchronous"]
 authors = ["Rousan Ali <rousanali786@gmail.com>"]
@@ -12,7 +12,7 @@ license = "MIT"
 edition = "2018"
 
 [features]
-default = ["tokio"]
+default = ["futures"]
 
 [dependencies]
 tokio = { version = "1", features= [], optional = true }
@@ -24,3 +24,7 @@ tokio = { version = "1", features = ["full"] }
 
 [package.metadata.docs.rs]
 features = ["futures", "tokio"]
+
+[[example]]
+name = "tokio"
+required-features = ["tokio"]
