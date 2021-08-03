@@ -2,10 +2,10 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```
 //! # async fn run() {
 //! use async_pipe;
-//! use tokio::io::{AsyncWriteExt, AsyncReadExt};
+//! use futures::io::{AsyncWriteExt, AsyncReadExt};
 //!
 //! let (mut w, mut r) = async_pipe::pipe();
 //!  
