@@ -5,7 +5,7 @@
 //! ```
 //! # async fn run() {
 //! use async_pipe;
-//! use futures::io::{AsyncWriteExt, AsyncReadExt};
+//! use tokio::io::{AsyncWriteExt, AsyncReadExt};
 //!
 //! let (mut w, mut r) = async_pipe::pipe();
 //!  
