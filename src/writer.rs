@@ -100,6 +100,16 @@ impl PipeWriter {
     }
 
     fn poll_flush(self: Pin<&mut Self>, cx: &mut Context) -> Poll<io::Result<()>> {
+        if Arc::strong_count(&self.state) == 1 {
+            return Poll::Ready(Err(io::Error::new(
+                io::ErrorKind::BrokenPipe,
+                format!(
+                    "{}: PipeWriter: The channel is closed",
+                    env!("CARGO_PKG_NAME")
+                ),
+            )));
+        }
+
         let mut state = match self.state.lock() {
             Ok(s) => s,
             Err(err) => {
