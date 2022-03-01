@@ -124,3 +124,9 @@ impl futures::io::AsyncRead for PipeReader {
         self.poll_read(cx, buf)
     }
 }
+
+impl Drop for PipeReader {
+    fn drop(&mut self) {
+        self.close().ok();
+    }
+}

@@ -148,6 +148,12 @@ impl PipeWriter {
     }
 }
 
+impl Drop for PipeWriter {
+    fn drop(&mut self) {
+        self.close().ok();
+    }
+}
+
 #[cfg(feature = "tokio")]
 impl tokio::io::AsyncWrite for PipeWriter {
     fn poll_write(self: Pin<&mut Self>, cx: &mut Context, buf: &[u8]) -> Poll<io::Result<usize>> {
